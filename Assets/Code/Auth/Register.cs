@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,7 +25,8 @@ public class Register : MonoBehaviour
             return;
         }
 
-        Debug.Log("Registering user with email: " + email + " and password: " + password);
+        // user is email and password
+
 
     }
 
