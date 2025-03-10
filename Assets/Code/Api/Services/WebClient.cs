@@ -5,16 +5,15 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class WebClient : MonoBehaviour
+public class WebClient
 {
-    public string baseUrl;
+    public string baseUrl = "https://localhost:7040";
     private string token;
 
     public void SetToken(string token)
     {
         this.token = token;
     }
-
 
     public async Awaitable<IWebRequestReponse> SendGetRequest(string route, Dictionary<string, string> headers)
     {

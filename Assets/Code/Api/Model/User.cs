@@ -1,16 +1,12 @@
-using UnityEngine;
-
-public class User : MonoBehaviour
+[System.Serializable]
+public class  User
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public string Email;
+    public string Password;
 
-    // Update is called once per frame
-    void Update()
+    public User(string email, string password)
     {
-        
+        Email = email;
+        Password = password;
     }
 }

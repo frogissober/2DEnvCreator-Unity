@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -5,29 +6,47 @@ using UnityEngine.UI;
 
 public class Register : MonoBehaviour
 {
+    private AuthService authService;
+
     public TMP_InputField emailInput;
     public TMP_InputField passwordInput;
+    public TMP_Text errorText;
 
-    public void OnRegister()
+    private void Start()
     {
-        string email = emailInput.text;
-        string password = passwordInput.text;
+        authService = new AuthService();
+    }
 
-        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+    public async void OnRegister()
+    {
+        User user = new(emailInput.text, passwordInput.text);
+
+        if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
         {
-            Debug.LogError("Email or Password is empty");
+            errorText.text = "Email and Password are required";
             return;
         }
 
-        if (!email.Contains("@") || !email.Contains("."))
+        if (!user.Email.Contains("@") || !user.Email.Contains("."))
         {
-            Debug.LogError("Email is not valid");
+            errorText.text = "Email is not valid";
             return;
         }
 
-        // user is email and password
+        IWebRequestReponse response = await authService.RegisterUser(user.Email, user.Password);
 
-
+        if (response is WebRequestData<string> dataResponse)
+        {
+            errorText.text = dataResponse.Data;
+        }
+        else if (response is WebRequestError errorResponse)
+        {
+            errorText.text = errorResponse.ErrorMessage;
+        }
+        else
+        {
+            throw new NotImplementedException("No implementation for webRequestResponse of class: " + response.GetType());
+        }
     }
 
 }

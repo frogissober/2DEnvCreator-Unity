@@ -1,16 +1,16 @@
+using TMPro;
 using UnityEngine;
 
 public class Login : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    private AuthService authService;
 
-    // Update is called once per frame
-    void Update()
+    public TMP_InputField emailInput;
+    public TMP_InputField passwordInput;
+    public TMP_Text errorText;
+
+    private void Start()
     {
-        
+        authService = new AuthService();
     }
 }
