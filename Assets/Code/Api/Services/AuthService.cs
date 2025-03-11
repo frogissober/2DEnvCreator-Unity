@@ -17,5 +17,17 @@ public class AuthService
         return response;
     }
 
+    public async Task<IWebRequestReponse> LoginUser(string email, string password)
+    {
+        string data = JsonUtility.ToJson(new User(email, password));
+        IWebRequestReponse response = await webClient.SendPostRequest("/account/login", data);
 
+        if (response is WebRequestData<string> dataResponse)
+        {
+            Token token = JsonUtility.FromJson<Token>(dataResponse.Data);
+            webClient.SetToken(token.accessToken);
+        }
+
+        return response;
+    }
 }
