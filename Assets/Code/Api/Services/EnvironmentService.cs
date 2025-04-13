@@ -1,50 +1,70 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 public class EnvironmentService
 {
-    private WebClient webClient;
+    private readonly WebClient webClient;
 
-    public EnvironmentService()
-    {
-        webClient = new WebClient();
-    }
+    public EnvironmentService() => webClient = ApiClientManager.Instance.GetClient();
 
     public async Task<IEnumerable<Environment>> GetEnvironments()
     {
         var response = await webClient.SendGetRequest("/Environment");
-        if (response is WebRequestData<string> dataResponse)
+        
+        if (response is WebRequestData<string> data)
         {
-            return JsonUtility.FromJson<List<Environment>>(dataResponse.Data);
+            try
+            {
+                return JsonHelper.ParseJsonArray<Environment>(data.Data) ?? new List<Environment>();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Failed to parse environments: {e.Message}");
+            }
         }
-        return null;
+        return new List<Environment>();
     }
 
     public async Task<Environment> GetEnvironment(int id)
     {
         var response = await webClient.SendGetRequest($"/Environment/{id}");
-        if (response is WebRequestData<string> dataResponse)
-        {
-            return JsonUtility.FromJson<Environment>(dataResponse.Data);
-        }
-        return null;
+        return response is WebRequestData<string> data ? JsonUtility.FromJson<Environment>(data.Data) : null;
     }
 
-    public async Task<Environment> CreateEnvironment(Environment environment)
+    public async Task<(Environment environment, string error)> CreateEnvironment(Environment environment)
     {
-        string data = JsonUtility.ToJson(environment);
-        var response = await webClient.SendPostRequest("/Environment", data);
-        if (response is WebRequestData<string> dataResponse)
+        if (string.IsNullOrEmpty(environment.name))
+            return (null, "Name is required");
+
+        var response = await webClient.SendPostRequest("/Environment", JsonUtility.ToJson(environment));
+        
+        if (response is WebRequestData<string> data)
         {
-            return JsonUtility.FromJson<Environment>(dataResponse.Data);
+            try
+            {
+                return (JsonUtility.FromJson<Environment>(data.Data), null);
+            }
+            catch
+            {
+                return (null, "Failed to parse server response");
+            }
         }
-        return null;
+        return (null, "Failed to create environment");
     }
 
     public async Task<bool> DeleteEnvironment(int id)
     {
         var response = await webClient.SendDeleteRequest($"/Environment/{id}", null);
-        return response != null;
+        return response is WebRequestData<string>;
     }
 }
+
+
+
+
+
+
+
+

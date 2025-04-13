@@ -18,4 +18,13 @@ public class SceneLoader : MonoBehaviour
         SceneManager.LoadScene("LoginScene");
     }
 
+    public void loadEnvironmentScene()
+    {
+        SceneManager.LoadScene("EnvironmentsScene");
+    }
+
+    public void loadCreateEnvironmentScene()
+    {
+        SceneManager.LoadScene("CreateEnvironmentScene");
+    }
 }

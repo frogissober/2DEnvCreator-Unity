@@ -1,9 +1,10 @@
 using UnityEngine;
 
+[System.Serializable]
 public class Environment
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public int Height { get; set; }
-    public int Width { get; set; }
+    public int id;
+    public string name;
+    public int height;
+    public int width;
 }

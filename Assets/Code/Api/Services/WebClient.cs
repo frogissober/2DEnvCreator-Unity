@@ -10,6 +10,8 @@ public class WebClient
     public string baseUrl = "https://localhost:7040";
     private string token;
 
+    public WebClient() { }
+
     public void SetToken(string token)
     {
         this.token = token;
@@ -19,9 +21,12 @@ public class WebClient
     {
         UnityWebRequest webRequest = CreateWebRequest("GET", route, "");
 
-        foreach (var header in headers)
+        if (headers != null)
         {
-            webRequest.SetRequestHeader(header.Key, header.Value);
+            foreach (var header in headers)
+            {
+                webRequest.SetRequestHeader(header.Key, header.Value);
+            }
         }
 
         return await SendWebRequest(webRequest);
@@ -44,9 +49,12 @@ public class WebClient
     {
         UnityWebRequest webRequest = CreateWebRequest("POST", route, data);
 
-        foreach (var header in headers)
+        if (headers != null)
         {
-            webRequest.SetRequestHeader(header.Key, header.Value);
+            foreach (var header in headers)
+            {
+                webRequest.SetRequestHeader(header.Key, header.Value);
+            }
         }
 
         return await SendWebRequest(webRequest);
@@ -56,9 +64,13 @@ public class WebClient
     public async Awaitable<IWebRequestReponse> SendDeleteRequest(string route, Dictionary<string, string> headers)
     {
         UnityWebRequest webRequest = CreateWebRequest("DELETE", route, "");
-        foreach (var header in headers)
+        
+        if (headers != null)
         {
-            webRequest.SetRequestHeader(header.Key, header.Value);
+            foreach (var header in headers)
+            {
+                webRequest.SetRequestHeader(header.Key, header.Value);
+            }
         }
 
         return await SendWebRequest(webRequest);

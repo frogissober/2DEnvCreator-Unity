@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 public class Login : MonoBehaviour
 {
     private AuthService authService;
-    private EnvironmentService environmentService;
 
     public TMP_InputField emailInput;
     public TMP_InputField passwordInput;
@@ -15,7 +14,6 @@ public class Login : MonoBehaviour
     private void Start()
     {
         authService = new AuthService();
-        environmentService = new EnvironmentService();
     }
 
     public async void onLogin()
@@ -28,22 +26,20 @@ public class Login : MonoBehaviour
             return;
         }
 
-        var loginResponse = await authService.LoginUser(user.Email, user.Password);
+        IWebRequestReponse loginResponse = await authService.LoginUser(user.Email, user.Password);
 
-        if (loginResponse != null)
+        switch (loginResponse)
         {
-            // Fetch the user's environments
-            var environments = await environmentService.GetEnvironments();
+            case WebRequestData<string> dataResponse:
+                errorText.text = "Login successful!";
+                SceneManager.LoadScene("EnvironmentsScene");
+                break;
+            case WebRequestError errorResponse:
+                errorText.text = errorResponse.ErrorMessage;
+                break;
+            default:
+                throw new System.NotImplementedException("No implementation for webRequestResponse of class: " + loginResponse.GetType());
 
-            // Store the environments in the static class
-
-
-            // Load the environments scene
-            SceneManager.LoadScene("EnvironmentsScene");
-        }
-        else
-        {
-            errorText.text = "Login failed. Please check your credentials.";
         }
     }
 }
